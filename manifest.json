@@ -1,0 +1,26 @@
+{
+	"name": "Startup Cookie Destroyer",
+	"version": "1.0.0",
+	"manifest_version": 2,
+	"description": "Remove unwanted cookies and site data on startup.",
+	"background": {
+		"scripts": ["/js/background.js"],
+		"persistent": false
+	},
+	"icons": {
+		"128": "/img/icon128.png"
+	},
+	"options_ui": {
+        "page": "/html/options.html",
+        "chrome_style": true,
+        "open_in_tab": false
+    },
+	"permissions": [
+		"browsingData",
+		"history",
+		"storage",
+		"cookies",
+		"http://*/*",
+		"https://*/*"
+	]
+}
