@@ -1,12 +1,17 @@
 function saveOptions(){
-	var subdomianArray = document.getElementById('subdomain-whitelist').value.split('\n');
-	var domianOnlyArray = document.getElementById('domain-only-whitelist').value.split('\n');
+	var subdomainArray = document.getElementById('subdomain-whitelist').value.split('\n');
+	var domainOnlyArray = document.getElementById('domain-only-whitelist').value.split('\n');
+	var cacheOption = document.getElementById('cache_option').checked;
+	var historyOption = document.getElementById('history_option').checked;
+
 	chrome.storage.local.set({
-		subdomianWhitelist: subdomianArray,
-		domainOnlyWhitelist: domianOnlyArray
+		subdomainWhitelist: subdomainArray,
+		domainOnlyWhitelist: domainOnlyArray,
+		clearCache: cacheOption,
+		clearHistory: historyOption
 	}, function(){
 		var status = document.getElementById('status');
-		status.textContent = 'Whitelists saved.';
+		status.textContent = 'Options saved.';
 		status.style.color = "green";
 		setTimeout(function(){
 			status.textContent = '';
@@ -16,11 +21,15 @@ function saveOptions(){
 
 function restoreOptions(){
 	chrome.storage.local.get({
-		subdomianWhitelist: [],
-		domainOnlyWhitelist: []
+		subdomainWhitelist: [],
+		domainOnlyWhitelist: [],
+		clearCache: false,
+		clearHistory: false
 	}, function(items){
-		document.getElementById('subdomain-whitelist').value = items.subdomianWhitelist.join("\n");
+		document.getElementById('subdomain-whitelist').value = items.subdomainWhitelist.join("\n");
 		document.getElementById('domain-only-whitelist').value = items.domainOnlyWhitelist.join("\n");
+		document.getElementById('cache_option').checked = items.clearCache;
+		document.getElementById('history_option').checked = items.clearHistory;
 	});
 }
 

@@ -1,40 +1,41 @@
 function removeCookie(cookie){
-	var subWhitelist = ["github.com", "facebook.com", "youtube.com", "reddit.com"];
-	var subCheck = 0;
-	for(var i = 0; i < subWhitelist.length; i++){
-		if(cookie.domain.endsWith(subWhitelist[i])){
-			subCheck++;
+	chrome.storage.local.get({
+		subdomainWhitelist: [],
+		domainOnlyWhitelist: []
+	}, function(array){
+		var subdomainCheck = 0;
+		for(var i = 0; i < array.subdomainWhitelist.length; i++){
+			if(cookie.domain.endsWith(array.subdomainWhitelist[i])){
+				subdomainCheck++;
+			}
 		}
-	}
 
-	var defWhitelist = ["accounts.google.com", "encrypted.google.com", "google.com"];
-	var defCheck = 0;
-
-	for(var i = 0; i < defWhitelist.length; i++){
-		if(cookie.domain == defWhitelist[i] || cookie.domain == "." + defWhitelist[i] || cookie.domain == "www." + defWhitelist[i]){
-			defCheck++;
+		var domainCheck = 0;
+		for(var i = 0; i < array.domainOnlyWhitelist.length; i++){
+			if(cookie.domain == array.domainOnlyWhitelist[i] || cookie.domain == "." + array.domainOnlyWhitelist[i] || cookie.domain == "www." + array.domainOnlyWhitelist[i]){
+				domainCheck++;
+			}
 		}
-	}
 
-	if(subCheck == 0 && defCheck == 0){
-		var url = "http" + (cookie.secure ? "s" : "") + "://" + cookie.domain + cookie.path;
-		chrome.cookies.remove({"url": url, "name": cookie.name});
-		console.log("Removed: " + cookie.domain + " " + url);
-	}
-};
+		if(subdomainCheck == 0 && domainCheck == 0){
+			var url = "http" + (cookie.secure ? "s" : "") + "://" + cookie.domain + cookie.path;
+			chrome.cookies.remove({"url": url, "name": cookie.name});
+			console.log("Removed: " + cookie.domain + " " + url);
+		}
+	});
+}
 
-function clearCookies(){
-	chrome.cookies.getAll({}, function(all_cookies){
-		var count = all_cookies.length;
-
-		for(var i = 0; i < count; i++){
-			removeCookie(all_cookies[i]);
+function clearSiteData(){
+	chrome.cookies.getAll({}, function(allCookies){
+		for(var i = 0; i < allCookies.length; i++){
+			removeCookie(allCookies[i]);
 		}
 	});
 
 	chrome.browsingData.remove({
 		"originTypes": {
-			"unprotectedWeb": true
+			"unprotectedWeb": true,
+			"protectedWeb": true
 		}
     }, {
 		"fileSystems": true,
@@ -46,7 +47,51 @@ function clearCookies(){
 		"serviceWorkers": true
     }, function(){
 		console.log("Cleared all other site data.");
+		
+		chrome.storage.local.get(null, function(option){
+			if(option.clearHistory){
+				chrome.browsingData.removeHistory({
+					"originTypes": {
+						"protectedWeb": true,
+						"unprotectedWeb": true,
+						"extension": true
+					}
+				}, function(){
+					console.log("Cleared history (as per user preference).");
+					if(option.clearCache){
+						chrome.browsingData.removeCache({
+							"originTypes": {
+								"protectedWeb": true,
+								"unprotectedWeb": true
+							}
+						}, function(){
+							console.log("Cleared cache (as per user preference).");
+						});
+					}
+				});
+			}
+			else if(option.clearCache){
+				chrome.browsingData.removeCache({
+					"originTypes": {
+						"protectedWeb": true,
+						"unprotectedWeb": true
+					}
+				}, function(){
+					console.log("Cleared cache (as per user preference).");
+				});
+			}
+		});
 	});
 }
 
-clearCookies();
+chrome.runtime.onInstalled.addListener(function(details){
+	if(details.reason == "install"){
+		chrome.runtime.openOptionsPage();
+	}
+});
+
+chrome.browserAction.onClicked.addListener(function(){
+	clearSiteData();
+});
+
+clearSiteData();

@@ -10,6 +10,9 @@
 	"icons": {
 		"128": "/img/icon128.png"
 	},
+	"browser_action": {
+		"name": "Clear cookies and site data."
+	},
 	"options_ui": {
         "page": "/html/options.html",
         "chrome_style": true,
@@ -17,7 +20,6 @@
     },
 	"permissions": [
 		"browsingData",
-		"history",
 		"storage",
 		"cookies",
 		"http://*/*",
