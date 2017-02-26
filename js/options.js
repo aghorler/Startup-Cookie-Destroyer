@@ -1,6 +1,8 @@
 function saveOptions(){
 	var subdomainArray = document.getElementById('subdomain-whitelist').value.split('\n');
+	subdomainArray = subdomainArray.filter(Boolean);
 	var domainOnlyArray = document.getElementById('domain-only-whitelist').value.split('\n');
+	domainOnlyArray = domainOnlyArray.filter(Boolean);
 	var cacheOption = document.getElementById('cache_option').checked;
 	var historyOption = document.getElementById('history_option').checked;
 
