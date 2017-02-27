@@ -26,39 +26,53 @@ function removeCookie(cookie){
 }
 
 function clearSiteData(){
-	chrome.cookies.getAll({}, function(allCookies){
-		for(var i = 0; i < allCookies.length; i++){
-			removeCookie(allCookies[i]);
-		}
-	});
+	chrome.storage.local.get('configured', function(check){
+		if(check.configured == true){
+			chrome.cookies.getAll({}, function(allCookies){
+				for(var i = 0; i < allCookies.length; i++){
+					removeCookie(allCookies[i]);
+				}
+			});
 
-	chrome.browsingData.remove({
-		"originTypes": {
-			"unprotectedWeb": true,
-			"protectedWeb": true
-		}
-    }, {
-		"fileSystems": true,
-		"indexedDB": true,
-		"localStorage": true,
-		"pluginData": true,
-		"webSQL": true,
-		"serverBoundCertificates": true,
-		"serviceWorkers": true
-    }, function(){
-		console.log("Cleared all other site data.");
-		
-		chrome.storage.local.get(null, function(option){
-			if(option.clearHistory){
-				chrome.browsingData.removeHistory({
-					"originTypes": {
-						"protectedWeb": true,
-						"unprotectedWeb": true,
-						"extension": true
+			chrome.browsingData.remove({
+				"originTypes": {
+					"unprotectedWeb": true,
+					"protectedWeb": true
+				}
+			}, {
+				"fileSystems": true,
+				"indexedDB": true,
+				"localStorage": true,
+				"pluginData": true,
+				"webSQL": true,
+				"serverBoundCertificates": true,
+				"serviceWorkers": true
+			}, function(){
+				console.log("Cleared all other site data.");
+				
+				chrome.storage.local.get(null, function(option){
+					if(option.clearHistory){
+						chrome.browsingData.removeHistory({
+							"originTypes": {
+								"protectedWeb": true,
+								"unprotectedWeb": true,
+								"extension": true
+							}
+						}, function(){
+							console.log("Cleared history (as per user preference).");
+							if(option.clearCache){
+								chrome.browsingData.removeCache({
+									"originTypes": {
+										"protectedWeb": true,
+										"unprotectedWeb": true
+									}
+								}, function(){
+									console.log("Cleared cache (as per user preference).");
+								});
+							}
+						});
 					}
-				}, function(){
-					console.log("Cleared history (as per user preference).");
-					if(option.clearCache){
+					else if(option.clearCache){
 						chrome.browsingData.removeCache({
 							"originTypes": {
 								"protectedWeb": true,
@@ -69,18 +83,11 @@ function clearSiteData(){
 						});
 					}
 				});
-			}
-			else if(option.clearCache){
-				chrome.browsingData.removeCache({
-					"originTypes": {
-						"protectedWeb": true,
-						"unprotectedWeb": true
-					}
-				}, function(){
-					console.log("Cleared cache (as per user preference).");
-				});
-			}
-		});
+			});
+		}
+		else{
+			console.log("Extension not configured. Clearing aborted.")
+		}
 	});
 }
 

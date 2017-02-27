@@ -10,7 +10,9 @@ function saveOptions(){
 		subdomainWhitelist: subdomainArray,
 		domainOnlyWhitelist: domainOnlyArray,
 		clearCache: cacheOption,
-		clearHistory: historyOption
+		clearHistory: historyOption,
+		//maybe
+		configured: true
 	}, function(){
 		var status = document.getElementById('status');
 		status.textContent = 'Options saved.';
