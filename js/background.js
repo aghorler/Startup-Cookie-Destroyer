@@ -27,7 +27,7 @@ function removeCookie(cookie){
 
 function clearSiteData(){
 	chrome.storage.local.get('configured', function(check){
-		if(check.configured == true){
+		if(check.configured){
 			chrome.cookies.getAll({}, function(allCookies){
 				for(var i = 0; i < allCookies.length; i++){
 					removeCookie(allCookies[i]);

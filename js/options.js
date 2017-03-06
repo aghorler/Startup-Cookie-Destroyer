@@ -11,7 +11,6 @@ function saveOptions(){
 		domainOnlyWhitelist: domainOnlyArray,
 		clearCache: cacheOption,
 		clearHistory: historyOption,
-		//maybe
 		configured: true
 	}, function(){
 		var status = document.getElementById('status');
@@ -28,12 +27,17 @@ function restoreOptions(){
 		subdomainWhitelist: [],
 		domainOnlyWhitelist: [],
 		clearCache: false,
-		clearHistory: false
+		clearHistory: false,
+		configured: false
 	}, function(items){
 		document.getElementById('subdomain-whitelist').value = items.subdomainWhitelist.join("\n");
 		document.getElementById('domain-only-whitelist').value = items.domainOnlyWhitelist.join("\n");
 		document.getElementById('cache_option').checked = items.clearCache;
 		document.getElementById('history_option').checked = items.clearHistory;
+
+		if(items.configured){
+			document.getElementById("conf-warning").style.display = 'none';
+		}
 	});
 }
 
