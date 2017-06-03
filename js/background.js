@@ -1,23 +1,30 @@
-function removeCookie(cookie){
+/* Function to check whitelist status of cookie, and delete accordingly. */
+function checkCookie(cookie){
 	chrome.storage.local.get({
-		subdomainWhitelist: [],
-		domainOnlyWhitelist: []
+		subDomainWhitelist: [],
+		rootDomainWhitelist: []
 	}, function(array){
-		var subdomainCheck = 0;
-		for(var i = 0; i < array.subdomainWhitelist.length; i++){
-			if(cookie.domain.endsWith(array.subdomainWhitelist[i])){
-				subdomainCheck++;
+
+		/* Check if cookie matches element of subdomain whitelist. (example.com or *.example.com) */
+		var preserveCookieSubdomain = false;
+		for(var i = 0; i < array.subDomainWhitelist.length; i++){
+			if(cookie.domain == array.subDomainWhitelist[i] || cookie.domain.endsWith("." + array.subDomainWhitelist[i])){
+				preserveCookieSubdomain = true;
+				break;
 			}
 		}
 
-		var domainCheck = 0;
-		for(var i = 0; i < array.domainOnlyWhitelist.length; i++){
-			if(cookie.domain == array.domainOnlyWhitelist[i] || cookie.domain == "." + array.domainOnlyWhitelist[i] || cookie.domain == "www." + array.domainOnlyWhitelist[i]){
-				domainCheck++;
+		/* Check if cookie matches element of root domain whitelist. (example.com or .example.com or www.example.com) */
+		var preserveCookieRoot = false;
+		for(var i = 0; i < array.rootDomainWhitelist.length; i++){
+			if(cookie.domain == array.rootDomainWhitelist[i] || cookie.domain == "." + array.rootDomainWhitelist[i] || cookie.domain == "www." + array.rootDomainWhitelist[i]){
+				preserveCookieRoot = true;
+				break;
 			}
 		}
 
-		if(subdomainCheck == 0 && domainCheck == 0){
+		/* Delete cookie if preservation flag not set. */
+		if(preserveCookieSubdomain == false && preserveCookieRoot == false){
 			var url = "http" + (cookie.secure ? "s" : "") + "://" + cookie.domain + cookie.path;
 			chrome.cookies.remove({"url": url, "name": cookie.name});
 			console.log("Removed: " + cookie.domain + " " + url);
@@ -25,21 +32,28 @@ function removeCookie(cookie){
 	});
 }
 
+/* Function to delete cookies using the checkCookie function, and indiscriminately delete all other relevant site data. */
 function clearSiteData(){
 	chrome.storage.local.get('configured', function(check){
+
+		/* Check if extension has been configured. This prevents the extension from removing all cookies on installation. */
 		if(check.configured){
+
+			/* Pass all cookies, one-by-one, to the checkCookie function. */
 			chrome.cookies.getAll({}, function(allCookies){
 				for(var i = 0; i < allCookies.length; i++){
-					removeCookie(allCookies[i]);
+					checkCookie(allCookies[i]);
 				}
 			});
 
+			/* Delete various other forms of site data, along with history and cache depending on user preference, indiscriminately. */
 			chrome.browsingData.remove({
 				"originTypes": {
 					"unprotectedWeb": true,
 					"protectedWeb": true
 				}
 			}, {
+				"appcache": true,
 				"fileSystems": true,
 				"indexedDB": true,
 				"localStorage": true,
@@ -91,14 +105,18 @@ function clearSiteData(){
 	});
 }
 
+/* Open extension options page on installation. */
 chrome.runtime.onInstalled.addListener(function(details){
 	if(details.reason == "install"){
 		chrome.runtime.openOptionsPage();
 	}
 });
 
+
+/* Run clearSiteData function on extension toolbar icon click. */
 chrome.browserAction.onClicked.addListener(function(){
 	clearSiteData();
 });
 
+/* Run clearSiteData function on extension load (on boot). */
 clearSiteData();
