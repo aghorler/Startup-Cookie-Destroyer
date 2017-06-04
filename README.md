@@ -1,5 +1,5 @@
 ## Startup Cookie Destroyer
-**Version 1.0.2 | March 8 2017**
+**Version 1.0.3 | June 3 2017**
 
 Clear unwanted cookies and all other site data on startup in Chromium browsers.
 
