@@ -1,5 +1,5 @@
 ## Startup Cookie Destroyer
-**Version 1.0.3 | June 3 2017**
+**Version 1.1 | JMay 9 2018**
 
 Clear unwanted cookies and all other site data on startup in Chromium browsers.
 
@@ -17,7 +17,7 @@ The extension is hosted entirely on GitHub, and the Chrome Web Store. These serv
 
 #### License
 
-Copyright 2017 Aaron Horler
+Copyright 2018 Aaron Horler
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

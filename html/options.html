@@ -1,44 +1,37 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Startup Cookie Manager</title>
-	</head>
-	<body>
-		<p id="conf-warning" style="color: red; text-align: center;">Startup Cookie Manager will not function until you apply these settings.</p>
+  <head>
+    <title>Startup Cookie Manager</title>
+  </head>
+  <body>
+    <h3 title="example.com will preserve example.com, and *.example.com cookies.">Cookie whitelist (include subdomains)</h3>
 
-		<h3 title="example.com will preserve example.com, and *.example.com cookies.">Cookie whitelist (include subdomains)</h3>
+    <p title="example.com will preserve example.com, and *.example.com cookies.">
+      <textarea id="subdomain-whitelist" rows="4" cols="50"></textarea>
+    </p>
 
-		<p title="example.com will preserve example.com, and *.example.com cookies.">
-			<textarea id="subdomain-whitelist" rows="4" cols="50"></textarea>
-		</p>
+    <h3 title="example.com will preserve example.com, .example.com, and www.example.com cookies.">Cookie whitelist (root domains only)</h3>
 
-		<h3 title="example.com will preserve example.com, .example.com, and www.example.com cookies.">Cookie whitelist (root domains only)</h3>
+    <p title="example.com will preserve example.com, .example.com, and www.example.com cookies.">
+      <textarea id="domain-only-whitelist" rows="4" cols="50"></textarea>
+    </p>
 
-		<p title="example.com will preserve example.com, .example.com, and www.example.com cookies.">
-			<textarea id="domain-only-whitelist" rows="4" cols="50"></textarea>
-		</p>
+    <h3 title="Additional tasks to perform whenever cookies and site data are cleared.">Additional settings</h3>
 
-		<h3 title="Additional tasks to perform whenever cookies and site data are cleared.">Additional settings</h3>
+    <p>
+      <input type="checkbox" id="cache_option"> 
+      <label for="cache_option">Clear cache.</label>
+    </p>
 
-		<p>
-			<label>
-				<input type="checkbox" id="cache_option"> Clear cache. <br>
-				<input type="checkbox" id="history_option"> Clear history.
-			</label>
-		</p>
+    <p>
+      <input type="checkbox" id="history_option">
+      <label for="history_option">Clear history.</label>
+    </p>
 
-		<p>
-			<span>
-				<button id="save">Apply settings</button>
-			</span>
+    <p align="center" style="color:grey;">
+      Developed by Aaron Horler (aghorler) | <a href="https://github.com/aghorler/Startup-Cookie-Destroyer">GitHub source</a>
+    </p>
 
-			<span id="status"></span>
-		</p>
-
-		<p align="center" style="color:grey">
-			Developed by Aaron Horler (aghorler) | <a href="https://github.com/aghorler/Startup-Cookie-Destroyer">GitHub source</a>
-		</p>
-
-		<script src="/js/options.js"></script>
-	</body>
+    <script src="/js/options.js"></script>
+  </body>
 </html>
