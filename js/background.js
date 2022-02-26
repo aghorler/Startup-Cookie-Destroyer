@@ -54,6 +54,7 @@ function clearSiteData(){
         }
       }, {
         "appcache": true,
+        "cacheStorage": true,
         "fileSystems": true,
         "indexedDB": true,
         "localStorage": true,
